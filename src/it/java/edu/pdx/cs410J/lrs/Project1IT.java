@@ -26,7 +26,14 @@ public class Project1IT extends InvokeMainTestCase {
   public void testNoCommandLineArguments() {
     MainMethodResult result = invokeMain();
     assertThat(result.getExitCode(), equalTo(1));
-    assertThat(result.getErr(), containsString("Missing command line arguments"));
+    assertThat(result.getErr(), containsString("Wrong number of options"));
+  }
+
+  @Test
+  public void testExpectedCommandLineArguments() {
+    MainMethodResult result = invokeMain("-print", "Caesar", "conquering", "01/02/3456", "12:34", "9/8/7654", "3:21");
+    assertThat(result.getExitCode(), equalTo(0));
+    assertThat(result.getOut(), containsString("conquering from"));
   }
 
 }
