@@ -2,10 +2,11 @@ package edu.pdx.cs410J.lrs;
 
 import edu.pdx.cs410J.AbstractAppointmentBook;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * The main class for the CS410J appointment book Project
@@ -26,13 +27,17 @@ public class Project1 {
 
     if(flags.contains("-README")) {
       //print readme from inline
+      System.out.print("readme here");
+      System.exit(0);
     }
 
+    //Check for wrong number of options:
     if(options.size() != 6) {
       System.err.println("Wrong number of options; expected: owner description beginDate beginTime endDate endTime");
       System.exit(1);
     }
 
+    //Check for unrecognized flags:
     for(String flag : flags) {
       if(!(flag.equals("-print") || flag.equals("-README"))) {
         System.err.println("Unrecognized flag " + flag);
@@ -40,8 +45,19 @@ public class Project1 {
       }
     }
 
+    //Check for empty description:
     if(options.get(2).isEmpty()) {
       System.err.println("Description may not be empty");
+      System.exit(1);
+    }
+
+    //Check validity of date and time:
+    if(!isValidDate(options.get(2)) || !isValidDate(options.get(4))) {
+      System.err.println("Invalid date format; expected: mm/dd/yyyy");
+      System.exit(1);
+    }
+    if(!isValidTime(options.get(3)) || !isValidTime(options.get(5))) {
+      System.err.println("Invalid time format; expected: hh:mm");
       System.exit(1);
     }
 
@@ -56,6 +72,13 @@ public class Project1 {
     System.exit(0);
   }
 
+  /**
+   * Adds the strings in arguments to the flags list until a string without a "-" prefix is
+   * reached; adds the rest of the strings in arguments to the options list.
+   * @param arguments the list of arguments to be separated
+   * @param flags empty list to be filled with flags
+   * @param options empty list to be filled with options
+     */
   public static void parseArguments(List<String> arguments, List<String> flags, List<String> options) {
     int index = 0;
     while(index < arguments.size()) {
@@ -72,13 +95,37 @@ public class Project1 {
     }
   }
 
-  private boolean isValidTime(String time) {
+  /**
+   * Checks whether the given string is a valid time in HH:mm format.
+   * @param time A string to be checked
+   * @return true if the string is a valid time, false otherwise
+     */
+  public static boolean isValidTime(String time) {
     //Check format first, then numerical constraints
-    return false;
+    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    format.setLenient(false);
+    try {
+      format.parse(time);
+    } catch (ParseException e) {
+      return false;
+    }
+    return true;
   }
 
-  private boolean isValidDate(String date) {
-    return false;
+  /**
+   * Checks whether the given string is a valid date in MM/dd/yyyy format.
+   * @param date A string to be checked
+   * @return true if the string is a valid date, false otherwise
+     */
+  public static boolean isValidDate(String date) {
+    SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+    format.setLenient(false);
+    try {
+      format.parse(date);
+    } catch (ParseException e) {
+      return false;
+    }
+    return true;
   }
 
 }
