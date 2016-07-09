@@ -27,6 +27,7 @@ public class Project1Test {
         assertThat(flags, CoreMatchers.hasItem("-print"));
         assertThat(opts, CoreMatchers.hasItems("one", "three"));
         assert(!opts.contains("-print"));
+        assertThat(opts, CoreMatchers.not(CoreMatchers.hasItem("-print")));
         assertThat(opts.get(0), equalTo("one"));
     }
 

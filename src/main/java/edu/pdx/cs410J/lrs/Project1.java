@@ -27,7 +27,16 @@ public class Project1 {
 
     if(flags.contains("-README")) {
       //print readme from inline
-      System.out.print("readme here");
+      System.out.print("\nLydia Simmons - Advanced Java Project 1\n\n" +
+              "Usage: [-README] [-print] owner description beginDate beginTime endDate endTime\n" +
+              "Dates should be formatted mm/dd/yyyy; times should be 24-hour formatted hh:mm\n\n" +
+              "This program creates a new AppointmentBook with\n" +
+              "the given owner, a new Appointment with the given\n" +
+              "description and start/end times, and adds the\n" +
+              "appointment to the appointment book. The optional\n" +
+              "-print flag will cause the program to print a\n" +
+              "summary of the new appointment before exiting.\n\n"
+      );
       System.exit(0);
     }
 
@@ -40,13 +49,13 @@ public class Project1 {
     //Check for unrecognized flags:
     for(String flag : flags) {
       if(!(flag.equals("-print") || flag.equals("-README"))) {
-        System.err.println("Unrecognized flag " + flag);
+        System.err.println("Unrecognized flag: " + flag);
         System.exit(1);
       }
     }
 
     //Check for empty description:
-    if(options.get(2).isEmpty()) {
+    if(options.get(1).isEmpty()) {
       System.err.println("Description may not be empty");
       System.exit(1);
     }
@@ -79,7 +88,7 @@ public class Project1 {
    * @param flags empty list to be filled with flags
    * @param options empty list to be filled with options
      */
-  public static void parseArguments(List<String> arguments, List<String> flags, List<String> options) {
+  static void parseArguments(List<String> arguments, List<String> flags, List<String> options) {
     int index = 0;
     while(index < arguments.size()) {
       if(arguments.get(index).startsWith("-")) {
@@ -100,7 +109,7 @@ public class Project1 {
    * @param time A string to be checked
    * @return true if the string is a valid time, false otherwise
      */
-  public static boolean isValidTime(String time) {
+   static boolean isValidTime(String time) {
     //Check format first, then numerical constraints
     SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     format.setLenient(false);
@@ -117,7 +126,7 @@ public class Project1 {
    * @param date A string to be checked
    * @return true if the string is a valid date, false otherwise
      */
-  public static boolean isValidDate(String date) {
+   static boolean isValidDate(String date) {
     SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
     format.setLenient(false);
     try {

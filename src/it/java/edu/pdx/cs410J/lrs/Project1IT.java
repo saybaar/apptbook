@@ -58,4 +58,11 @@ public class Project1IT extends InvokeMainTestCase {
     assertThat(result.getExitCode(), equalTo(1));
     assertThat(result.getErr(), containsString("Invalid date format"));
   }
+
+  @Test
+  public void testEmptyDescriptionError() {
+    MainMethodResult result = invokeMain("Caesar", "", "1/2/3456", "12:34", "9/8/7654", "3:21");
+    assertThat(result.getExitCode(), equalTo(1));
+    assertThat(result.getErr(), containsString("Description may not be empty"));
+  }
 }
