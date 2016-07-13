@@ -7,25 +7,19 @@ import edu.pdx.cs410J.AbstractAppointment;
  */
 public class Appointment extends AbstractAppointment {
   private String description;
-  private String startDate;
-  private String startTime;
-  private String endDate;
-  private String endTime;
+  private String startDateTime;
+  private String endDateTime;
 
   /**
    * Creates a new Appointment with the given string parameters.
    * @param description A description of the appointment
-   * @param startDate Start date (MM/dd/yyyy)
-   * @param startTime Start time (HH:mm)
-   * @param endDate End date (MM/dd/yyyy)
-     * @param endTime End time (HH:mm)
+   * @param startDateTime Start date/time (MM/dd/yyyy HH:mm)
+   * @param endDateTime End date/time
      */
-  public Appointment(String description, String startDate, String startTime, String endDate, String endTime) {
+  public Appointment(String description, String startDateTime, String endDateTime) {
     this.description = description;
-    this.startDate = startDate;
-    this.startTime = startTime;
-    this.endDate = endDate;
-    this.endTime = endTime;
+    this.startDateTime = startDateTime;
+    this.endDateTime = endDateTime;
   }
 
   /**
@@ -34,7 +28,7 @@ public class Appointment extends AbstractAppointment {
      */
   @Override
   public String getBeginTimeString() {
-    return startDate + " " + startTime;
+    return startDateTime;
   }
 
   /**
@@ -43,7 +37,7 @@ public class Appointment extends AbstractAppointment {
      */
   @Override
   public String getEndTimeString() {
-    return endDate + " " + endTime;
+    return endDateTime;
   }
 
   /**

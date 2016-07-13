@@ -1,10 +1,11 @@
 package edu.pdx.cs410J.lrs;
 
 import edu.pdx.cs410J.AbstractAppointmentBook;
+import edu.pdx.cs410J.ParserException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,113 +20,137 @@ public class Project2 {
 
         //args: owner description beginTime endTime
         //beginTime and endTime each have mm/dd/yyyy hh:mm with leading 0s optional for mm, dd, hh
-        //optional flags before args: -print -README
-        List<String> flags = new ArrayList<>(2);
-        List<String> options = new ArrayList<>(6);
-        List<String> arguments = Arrays.asList(args);
-        parseArguments(arguments, flags, options);
+        //optional flags before args: -print -README -file filepath
+        boolean shouldPrint = false;
+        boolean fileMode = false;
+        String filePath = null;
+        String owner = null;
+        String description = null;
+        String beginDateString = null;
+        String beginTimeString = null;
+        String endDateString = null;
+        String endTimeString = null;
 
-        if(flags.contains("-README")) {
-            //print readme from inline
-            System.out.print("readme here");
-            System.exit(0);
+        int i = 0;
+        for(; i < args.length && args[i].startsWith("-"); i++) {
+            if (args[i].equals("-README")) {
+                printReadMe();
+                System.exit(0);
+            } else if (args[i].equals("-print")) {
+                shouldPrint = true;
+            } else if (args[i].equals("-file")) {
+                i++;
+                fileMode = true;
+                try {
+                    filePath = args[i];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.err.println("-file flag requires a value");
+                    System.exit(1);
+                }
+            } else {
+                System.err.println("Unrecognized flag: " + args[i]);
+                System.exit(1);
+            }
+        }
+        for(; i < args.length; i++) {
+            if(owner == null) {
+                owner = args[i];
+            } else if(description == null) {
+                description = args[i];
+            } else if(beginDateString == null) {
+                beginDateString = args[i];
+            } else if(beginTimeString == null) {
+                beginTimeString = args[i];
+            } else if(endDateString == null) {
+                endDateString = args[i];
+            } else if(endTimeString == null) {
+                endTimeString = args[i];
+            }
         }
 
         //Check for wrong number of options:
-        if(options.size() != 6) {
-            System.err.println("Wrong number of options; expected: owner description beginDate beginTime endDate endTime");
-            System.exit(1);
-        }
-
-        //Check for unrecognized flags:
-        for(String flag : flags) {
-            if(!(flag.equals("-print") || flag.equals("-README"))) {
-                System.err.println("Unrecognized flag " + flag);
+        List<String> necessaryOptionsList = Arrays.asList(owner, description, beginDateString, beginTimeString, endDateString, endTimeString);
+        for(String option : necessaryOptionsList) {
+            if (option == null) {
+                System.err.println("Wrong number of options; expected: owner description beginDate beginTime endDate endTime");
                 System.exit(1);
             }
         }
 
         //Check for empty description:
-        if(options.get(2).isEmpty()) {
-            System.err.println("Description may not be empty");
+        if(description.isEmpty()) {
+            System.err.println("Error: Description may not be empty");
             System.exit(1);
         }
 
         //Check validity of date and time:
-        if(!isValidDate(options.get(2)) || !isValidDate(options.get(4))) {
-            System.err.println("Invalid date format; expected: mm/dd/yyyy");
-            System.exit(1);
-        }
-        if(!isValidTime(options.get(3)) || !isValidTime(options.get(5))) {
-            System.err.println("Invalid time format; expected: hh:mm");
+        if(!ApptBookUtilities.isValidDateTime(beginDateString + " " + beginTimeString) || !ApptBookUtilities.isValidDateTime(endDateString + " " + endTimeString)) {
+            System.err.println("Invalid date/time format; expected: mm/dd/yyyy hh:mm");
             System.exit(1);
         }
 
-        AppointmentBook apptBook = new AppointmentBook(options.get(0));
-        Appointment appt = new Appointment(options.get(1), options.get(2), options.get(3), options.get(4), options.get(5));
+        //The AppointmentBook we will be working with
+        AppointmentBook apptBook = null;
+
+        //If we are in fileMode, parse apptBook from the given file if it exists, or create a new AppointmentBook if not
+        if(fileMode) {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(filePath);
+            } catch (FileNotFoundException e) {
+                apptBook = new AppointmentBook(owner);
+            }
+
+            if (apptBook == null) { //i.e. reader creation was successful, so the file exists
+                TextParser parser = new TextParser(reader);
+                try {
+                    apptBook = (AppointmentBook) parser.parse(); //TODO: is this okay?
+                } catch (ParserException e) {
+                    System.err.println("Parser exception - " + e.getMessage());
+                    System.exit(1);
+                }
+            }
+            //If not in fileMode, always create a new AppointmentBook
+        } else {
+            apptBook = new AppointmentBook(owner);
+        }
+
+        //Check that the owner from command line is the same as the owner of apptBook; this may not be true if apptBook was read from file
+        if(!apptBook.getOwnerName().equals(owner)) {
+            System.err.println("Error: Owner of this appointment does not own the given AppointmentBook");
+            System.exit(1);
+        }
+
+        //Add the specified appointment to apptBook
+        Appointment appt = new Appointment(description, beginDateString + " " + beginTimeString, endDateString + " " + endTimeString);
         apptBook.addAppointment(appt);
 
-        if(flags.contains("-print")) {
+        //Print if -print flag is enabled
+        if(shouldPrint) {
             System.out.println(appt.toString());
+        }
+
+        //If we are in fileMode, write apptBook to the given filepath
+        if(fileMode) {
+            TextDumper dumper = new TextDumper(filePath);
+            try {
+                dumper.dump(apptBook);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
         }
 
         System.exit(0);
     }
 
-    /**
-     * Adds the strings in arguments to the flags list until a string without a "-" prefix is
-     * reached; adds the rest of the strings in arguments to the options list.
-     * @param arguments the list of arguments to be separated
-     * @param flags empty list to be filled with flags
-     * @param options empty list to be filled with options
-     */
-    public static void parseArguments(List<String> arguments, List<String> flags, List<String> options) {
-        int index = 0;
-        while(index < arguments.size()) {
-            if(arguments.get(index).startsWith("-")) {
-                flags.add(arguments.get(index));
-                index++;
-            } else {
-                break;
-            }
-        }
-        while(index < arguments.size()) {
-            options.add(arguments.get(index));
-            index++;
-        }
-    }
-
-    /**
-     * Checks whether the given string is a valid time in HH:mm format.
-     * @param time A string to be checked
-     * @return true if the string is a valid time, false otherwise
-     */
-    public static boolean isValidTime(String time) {
-        //Check format first, then numerical constraints
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        format.setLenient(false);
-        try {
-            format.parse(time);
-        } catch (ParseException e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks whether the given string is a valid date in MM/dd/yyyy format.
-     * @param date A string to be checked
-     * @return true if the string is a valid date, false otherwise
-     */
-    public static boolean isValidDate(String date) {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        format.setLenient(false);
-        try {
-            format.parse(date);
-        } catch (ParseException e) {
-            return false;
-        }
-        return true;
+    private static void printReadMe() {
+        System.out.print("\n\n" +
+                "Lydia Simmons - CS510J Advanced Java, Project 2\n\n" +
+                "Usage: [-README] [-print] [-file filepath] owner description startDate startTime endDate endTime\n\n" +
+                "Creates an Appointment with the given parameters. If -print is enabled, prints the Appointment to" +
+                "the console. If -file is enabled, adds the Appointment to a new or existing appointment book stored" +
+                "at filepath. Will not add appointments to an existing file if the owner does not match.\n\n");
     }
 
 }

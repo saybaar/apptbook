@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AppointmentTest {
 
-  Appointment defaultAppt = new Appointment("conquering", "01/02/3456", "12:34", "9/8/7654", "3:21");
+  Appointment defaultAppt = new Appointment("conquering", "01/02/3456 12:34", "9/8/7654 3:21");
 
   @Test
   public void appointmentToString() {
