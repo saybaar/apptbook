@@ -8,16 +8,29 @@ import java.io.*;
 
 import static edu.pdx.cs410J.lrs.ApptBookUtilities.isValidDateTime;
 
+/**
+ * Class for parsing appointment book files
+ */
 public class TextParser implements AppointmentBookParser {
-    FileReader r;
+    private FileReader r;
 
+    /**
+     * Creates a new TextParser with the given FileReader.
+     * @param r The FileReader to use for this TextParser.
+     */
     public TextParser(FileReader r) {
         this.r = r;
     }
 
+    /**
+     * Uses the TextParser's FileReader to read, parse, and return an AppointmentBook in the format specified by the
+     * TextDumper class. Throws a ParserException if the format is incorrect or there is an error while reading.
+     * @return The AppointmentBook object generated from the FileReader's file
+     * @throws ParserException
+     */
     @Override
     public AbstractAppointmentBook parse() throws ParserException {
-        AppointmentBook apptBook = null;
+        AppointmentBook apptBook;
         try (BufferedReader br = new BufferedReader(r)) {
             String line = br.readLine();
             if(line == null) {
@@ -36,7 +49,7 @@ public class TextParser implements AppointmentBookParser {
                 for (int i = 0; i < 3; i++) {
                     line = br.readLine();
                     if(line == null || line.isEmpty()) {
-                        throw new ParserException("Missing field in appointment record");
+                        throw new ParserException("File is bad - may be missing a field in an appointment record");
                     } else {
                         lines[i] = line;
                     }

@@ -9,16 +9,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Created by lydia on 7/9/16.
+ * Class for dumping appointment book files
  */
 public class TextDumper implements AppointmentBookDumper {
 
-    String filePath;
+    private String filePath;
 
+    /**
+     * Creates a new TextDumper that will write to the given file name/path.
+     * @param filePath The (relative) filepath to write to
+     */
     public TextDumper(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Writes the given AppointmentBook to file at the location given by the TextDumper's filePath string.
+     * Will generate a system error if filePath contains a directory that does not exist.
+     * @param apptBook The appointment book to dump
+     * @throws IOException
+     */
     @Override
     public void dump(AbstractAppointmentBook apptBook) throws IOException {
         File file = new File(filePath);

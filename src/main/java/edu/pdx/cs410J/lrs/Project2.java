@@ -14,6 +14,11 @@ import java.util.List;
  */
 public class Project2 {
 
+    /**
+     * Main method for Project 2. Creates and optionally prints an appointment; if -file is enabled, reads an
+     * AppointmentBook from file (or creates a new one), adds the given appointment, and writes back to file.
+     * @param args [-README] [-print] [-file filename] owner description beginDate beginTime endDate endTime
+     */
     public static void main(String[] args) {
 
         Class c = AbstractAppointmentBook.class;  // Refer to one of Dave's classes so that we can be sure it is on the classpath
@@ -125,25 +130,28 @@ public class Project2 {
         Appointment appt = new Appointment(description, beginDateString + " " + beginTimeString, endDateString + " " + endTimeString);
         apptBook.addAppointment(appt);
 
-        //Print if -print flag is enabled
-        if(shouldPrint) {
-            System.out.println(appt.toString());
-        }
-
         //If we are in fileMode, write apptBook to the given filepath
         if(fileMode) {
             TextDumper dumper = new TextDumper(filePath);
             try {
                 dumper.dump(apptBook);
             } catch (IOException e) {
-                System.err.println(e.getMessage());
+                System.err.println("Error dumping file: " + e.getMessage());
                 System.exit(1);
             }
+        }
+        
+        //Print if -print flag is enabled
+        if(shouldPrint) {
+            System.out.println(appt.toString());
         }
 
         System.exit(0);
     }
 
+    /**
+     * Prints the README for Project 2
+     */
     private static void printReadMe() {
         System.out.print("\n\n" +
                 "Lydia Simmons - CS510J Advanced Java, Project 2\n\n" +
