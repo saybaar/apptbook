@@ -6,7 +6,10 @@ import edu.pdx.cs410J.ParserException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,9 +18,7 @@ import java.util.List;
 public class Project3 {
 
     /**
-     * Main method for Project 2. Creates and optionally prints an appointment; if -file is enabled, reads an
-     * AppointmentBook from file (or creates a new one), adds the given appointment, and writes back to file.
-     * @param args [-README] [-print] [-file filename] owner description beginDate beginTime endDate endTime
+     *
      */
     public static void main(String[] args) {
 
@@ -99,13 +100,18 @@ public class Project3 {
             System.exit(1);
         }
 
-        //Check validity of date and time:
-        if(!ApptBookUtilities.isValidDateTime(beginDateString + " " + beginTimeString) || !ApptBookUtilities.isValidDateTime(endDateString + " " + endTimeString)) {
+        //Check validity of date and time and convert to Date objects:
+        Date beginDateTime = null;
+        Date endDateTime = null;
+        try {
+            beginDateTime = ApptBookUtilities.parseDateTime(beginDateString + " " + beginTimeString);
+            endDateTime = ApptBookUtilities.parseDateTime(endDateString + " " + endTimeString);
+        } catch (ParseException e) {
             System.err.println("Invalid date/time format; expected: mm/dd/yyyy hh:mm");
             System.exit(1);
         }
 
-        //The AppointmentBook we will be working with
+        //The AppointmentBook we will be working with:
         AppointmentBook apptBook = null;
 
         //If we are in fileMode, parse apptBook from the given file if it exists, or create a new AppointmentBook if not
@@ -140,7 +146,7 @@ public class Project3 {
         //TODO: Check that the appointment does not already exist in the apptBook
 
         //Add the specified appointment to apptBook
-        Appointment appt = new Appointment(description, beginDateString + " " + beginTimeString, endDateString + " " + endTimeString);
+        Appointment appt = new Appointment(description, beginDateTime, endDateTime);
         apptBook.addAppointment(appt);
 
         //If we are in fileMode, write apptBook to the given filepath
@@ -154,11 +160,13 @@ public class Project3 {
             }
         }
 
+        //TODO: Handle pretty-printing to stdout (file = "-")
+
         //If we are in pretty-print mode, pretty-print apptBook to the given filepath
         if(prettyPrint) {
-            PrettyPrinter dumper = new PrettyPrinter(filePath);
+            PrettyPrinter prettyPrinter = new PrettyPrinter(filePath);
             try {
-                dumper.dump(apptBook);
+                prettyPrinter.dump(apptBook);
             } catch (IOException e) {
                 System.err.println("Error pretty-printing file: " + e.getMessage());
                 System.exit(1);

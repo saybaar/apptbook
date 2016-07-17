@@ -5,8 +5,10 @@ import edu.pdx.cs410J.AppointmentBookParser;
 import edu.pdx.cs410J.ParserException;
 
 import java.io.*;
+import java.text.ParseException;
+import java.util.Date;
 
-import static edu.pdx.cs410J.lrs.ApptBookUtilities.isValidDateTime;
+import static edu.pdx.cs410J.lrs.ApptBookUtilities.parseDateTime;
 
 /**
  * Class for parsing appointment book files
@@ -54,8 +56,12 @@ public class TextParser implements AppointmentBookParser {
                         lines[i] = line;
                     }
                 }
-                if(!isValidDateTime(lines[1]) || !isValidDateTime(lines[2])) {
-                    throw new ParserException("Malformatted date in appointment record");
+Date start = null;
+                try {
+                    parseDateTime(lines[1]);
+                    parseDateTime(lines[2]);
+                } catch (ParseException e) {
+                    throw new ParserException("Malformatted date in appointment record")
                 }
                 apptBook.addAppointment(new Appointment(lines[0], lines[1], lines[2]));
             }

@@ -25,6 +25,9 @@ public class AppointmentBook extends AbstractAppointmentBook<Appointment> {
 
     @Override
     public void addAppointment(Appointment appointment) {
-        appts.add(appointment);
+        if(appts.add(appointment) == false) {
+            System.err.println("That appointment already exists");
+            System.exit(1);
+        };
     }
 }

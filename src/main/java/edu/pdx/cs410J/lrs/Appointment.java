@@ -2,13 +2,18 @@ package edu.pdx.cs410J.lrs;
 
 import edu.pdx.cs410J.AbstractAppointment;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Class for Appointment objects.
  */
-public class Appointment extends AbstractAppointment implements Comparable {
+public class Appointment extends AbstractAppointment implements Comparable<Appointment> {
   private String description;
-  private String startDateTime;
-  private String endDateTime;
+  private Date startDateTime;
+  private Date endDateTime;
 
   /**
    * Creates a new Appointment with the given string parameters.
@@ -16,7 +21,7 @@ public class Appointment extends AbstractAppointment implements Comparable {
    * @param startDateTime Start date/time (MM/dd/yyyy HH:mm)
    * @param endDateTime End date/time
      */
-  public Appointment(String description, String startDateTime, String endDateTime) {
+  public Appointment(String description, Date startDateTime, Date endDateTime) {
     this.description = description;
     this.startDateTime = startDateTime;
     this.endDateTime = endDateTime;
@@ -28,7 +33,7 @@ public class Appointment extends AbstractAppointment implements Comparable {
      */
   @Override
   public String getBeginTimeString() {
-    return startDateTime;
+    return DateFormat.getTimeInstance(DateFormat.SHORT).format(startDateTime);
   }
 
   /**
@@ -37,7 +42,7 @@ public class Appointment extends AbstractAppointment implements Comparable {
      */
   @Override
   public String getEndTimeString() {
-    return endDateTime;
+    return DateFormat.getTimeInstance(DateFormat.SHORT).format(startDateTime);
   }
 
   /**
@@ -50,7 +55,35 @@ public class Appointment extends AbstractAppointment implements Comparable {
   }
 
   @Override
-  public int compareTo(Object o) {
+  public int compareTo(Appointment other) {
+    int startDateOrder = this.startDateTime.compareTo(other.startDateTime);
+    int endDateOrder = this.endDateTime.compareTo(other.endDateTime);
+    int descriptionOrder = this.description.compareTo(other.description);
+    switch (startDateOrder) {
+      case -1:
+        return -1;
+      case 1:
+        return 1;
+      default:
+    }
+    switch (endDateOrder) {
+      case -1:
+        return -1;
+      case 1:
+        return 1;
+      default:
+    }
+    switch (descriptionOrder) {
+      case -1:
+        return -1;
+      case 1:
+        return 1;
+      default:
+    }
     return 0;
+  }
+
+  public long getDurationInMinutes() {
+    return TimeUnit.MILLISECONDS.toMinutes(endDateTime.getTime() - startDateTime.getTime());
   }
 }
