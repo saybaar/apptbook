@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * The main class for the CS410J appointment book Project
  */
-public class Project2 {
+public class Project3 {
 
     /**
      * Main method for Project 2. Creates and optionally prints an appointment; if -file is enabled, reads an
@@ -27,6 +27,8 @@ public class Project2 {
         //beginTime and endTime each have mm/dd/yyyy hh:mm with leading 0s optional for mm, dd, hh
         //optional flags before args: -print -README -file filepath
         boolean shouldPrint = false;
+        boolean prettyPrint = false;
+        String prettyPath = null;
         boolean fileMode = false;
         String filePath = null;
         String owner = null;
@@ -43,13 +45,22 @@ public class Project2 {
                 System.exit(0);
             } else if (args[i].equals("-print")) {
                 shouldPrint = true;
-            } else if (args[i].equals("-file")) {
+            } else if (args[i].equals("-textFile")) {
                 i++;
                 fileMode = true;
                 try {
                     filePath = args[i];
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    System.err.println("-file flag requires a value");
+                    System.err.println("-textFile flag requires a value");
+                    System.exit(1);
+                }
+            } else if (args[i].equals("-pretty")) {
+                i++;
+                prettyPrint = true;
+                try {
+                    prettyPath = args[i];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.err.println("-pretty flag requires a value");
                     System.exit(1);
                 }
             } else {
@@ -126,6 +137,8 @@ public class Project2 {
             System.exit(1);
         }
 
+        //TODO: Check that the appointment does not already exist in the apptBook
+
         //Add the specified appointment to apptBook
         Appointment appt = new Appointment(description, beginDateString + " " + beginTimeString, endDateString + " " + endTimeString);
         apptBook.addAppointment(appt);
@@ -137,6 +150,17 @@ public class Project2 {
                 dumper.dump(apptBook);
             } catch (IOException e) {
                 System.err.println("Error dumping file: " + e.getMessage());
+                System.exit(1);
+            }
+        }
+
+        //If we are in pretty-print mode, pretty-print apptBook to the given filepath
+        if(prettyPrint) {
+            PrettyPrinter dumper = new PrettyPrinter(filePath);
+            try {
+                dumper.dump(apptBook);
+            } catch (IOException e) {
+                System.err.println("Error pretty-printing file: " + e.getMessage());
                 System.exit(1);
             }
         }
@@ -155,10 +179,14 @@ public class Project2 {
     private static void printReadMe() {
         System.out.print("\n\n" +
                 "Lydia Simmons - CS510J Advanced Java, Project 2\n\n" +
-                "Usage: [-README] [-print] [-file filepath] owner description startDate startTime endDate endTime\n\n" +
-                "Creates an Appointment with the given parameters. If -print is enabled, prints the Appointment to" +
-                "the console. If -file is enabled, adds the Appointment to a new or existing appointment book stored" +
-                "at filepath. Will not add appointments to an existing file if the owner does not match.\n\n");
+                "Usage: [-README] [-print] [-file filepath] owner description startDate \n" +
+                "\tstartTime endDate endTime\n\n" +
+                "Creates an Appointment with the given parameters. \n" +
+                "If -print is enabled, prints the Appointment to the \n" +
+                "console. If -file is enabled, adds the Appointment to \n" +
+                "a new or existing appointment book stored at filepath. \n" +
+                "Will not add appointments to an existing file if the \n" +
+                "owner does not match.\n\n");
     }
 
 }

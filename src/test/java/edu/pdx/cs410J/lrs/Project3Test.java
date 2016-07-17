@@ -1,21 +1,16 @@
 package edu.pdx.cs410J.lrs;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Unit tests for the command line parser, format checking,
- * and other tools in the {@link Project2} and {@link ApptBookUtilities} classes.
+ * and other tools in the {@link Project3} and {@link ApptBookUtilities} classes.
  */
-public class Project2Test {
+public class Project3Test {
 
     @Test
     public void ValidDateIsValid() {

@@ -5,7 +5,7 @@ import edu.pdx.cs410J.AbstractAppointment;
 /**
  * Class for Appointment objects.
  */
-public class Appointment extends AbstractAppointment {
+public class Appointment extends AbstractAppointment implements Comparable {
   private String description;
   private String startDateTime;
   private String endDateTime;
@@ -47,5 +47,10 @@ public class Appointment extends AbstractAppointment {
   @Override
   public String getDescription() {
     return description;
+  }
+
+  @Override
+  public int compareTo(Object o) {
+    return 0;
   }
 }
