@@ -164,7 +164,7 @@ public class Project3 {
 
         //If we are in pretty-print mode, pretty-print apptBook to the given filepath
         if(prettyPrint) {
-            PrettyPrinter prettyPrinter = new PrettyPrinter(filePath);
+            PrettyPrinter prettyPrinter = new PrettyPrinter(prettyPath);
             try {
                 prettyPrinter.dump(apptBook);
             } catch (IOException e) {

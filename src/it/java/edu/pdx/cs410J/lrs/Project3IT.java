@@ -59,7 +59,7 @@ public class Project3IT extends InvokeMainTestCase {
 
     @Test
     public void testFileFlagWithoutPath() {
-        MainMethodResult result = invokeMain("-file");
+        MainMethodResult result = invokeMain("-textFile");
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getErr(), containsString("requires a value"));
     }

@@ -27,13 +27,21 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
     this.endDateTime = endDateTime;
   }
 
+  public Date getStartDateTime() {
+    return startDateTime;
+  }
+
+  public Date getEndDateTime() {
+    return endDateTime;
+  }
+
   /**
    * Returns a string with the beginning date and time
    * @return string with the beginning date and time
      */
   @Override
   public String getBeginTimeString() {
-    return DateFormat.getTimeInstance(DateFormat.SHORT).format(startDateTime);
+    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(startDateTime);
   }
 
   /**
@@ -42,7 +50,7 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
      */
   @Override
   public String getEndTimeString() {
-    return DateFormat.getTimeInstance(DateFormat.SHORT).format(startDateTime);
+    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(endDateTime);
   }
 
   /**
@@ -59,26 +67,12 @@ public class Appointment extends AbstractAppointment implements Comparable<Appoi
     int startDateOrder = this.startDateTime.compareTo(other.startDateTime);
     int endDateOrder = this.endDateTime.compareTo(other.endDateTime);
     int descriptionOrder = this.description.compareTo(other.description);
-    switch (startDateOrder) {
-      case -1:
-        return -1;
-      case 1:
-        return 1;
-      default:
-    }
-    switch (endDateOrder) {
-      case -1:
-        return -1;
-      case 1:
-        return 1;
-      default:
-    }
-    switch (descriptionOrder) {
-      case -1:
-        return -1;
-      case 1:
-        return 1;
-      default:
+    if(startDateOrder != 0) {
+      return startDateOrder;
+    } else if(endDateOrder != 0) {
+      return endDateOrder;
+    } else if(descriptionOrder != 0) {
+      return descriptionOrder;
     }
     return 0;
   }

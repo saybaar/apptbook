@@ -41,8 +41,8 @@ public class TextDumper implements AppointmentBookDumper {
                 StringBuilder sb = new StringBuilder();
                 sb.append("\n\n");
                 sb.append(appt.getDescription() + "\n");
-                sb.append(appt.getBeginTimeString() + "\n");
-                sb.append(appt.getEndTimeString());
+                sb.append(ApptBookUtilities.dumpDateTime(appt.getStartDateTime()) + "\n");
+                sb.append(ApptBookUtilities.dumpDateTime(appt.getEndDateTime()));
                 bw.write(sb.toString(), 0, sb.toString().length());
             }
         } catch (IOException e) {

@@ -56,14 +56,15 @@ public class TextParser implements AppointmentBookParser {
                         lines[i] = line;
                     }
                 }
-Date start = null;
+                Date startDateTime = null;
+                Date endDateTime = null;
                 try {
-                    parseDateTime(lines[1]);
-                    parseDateTime(lines[2]);
+                    startDateTime = parseDateTime(lines[1]);
+                    endDateTime = parseDateTime(lines[2]);
                 } catch (ParseException e) {
-                    throw new ParserException("Malformatted date in appointment record")
+                    throw new ParserException("Malformatted date in appointment record");
                 }
-                apptBook.addAppointment(new Appointment(lines[0], lines[1], lines[2]));
+                apptBook.addAppointment(new Appointment(lines[0], startDateTime, endDateTime));
             }
 
         } catch (IOException e) {

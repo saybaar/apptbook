@@ -42,37 +42,32 @@ public class PrettyPrinter implements AppointmentBookDumper {
             file.createNewFile();
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-            bw.write(apptBook.getOwnerName(), 0, apptBook.getOwnerName().length());
-            for(Appointment appt : ((AppointmentBook) apptBook).getAppointments()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("\n\n");
-                sb.append(appt.getDescription() + "\n");
-                sb.append(appt.getBeginTimeString() + "\n");
-                sb.append(appt.getEndTimeString() + "\n");
-                sb.append(appt.getDurationInMinutes());
-                bw.write(sb.toString(), 0, sb.toString().length());
-            }
+            bw.write(dumpString(apptBook));
         } catch (IOException e) {
-            throw new IOException("IOException while pretty-printing apptBook");
+            throw new IOException("IOException while pretty-printing apptBook to file: " + e.getMessage());
         }
     }
 
     public void stdOutDump(AbstractAppointmentBook apptBook) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out))) {
-            bw.write(apptBook.getOwnerName(), 0, apptBook.getOwnerName().length());
-            for(Appointment appt : ((AppointmentBook) apptBook).getAppointments()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("\n\n");
-                sb.append(appt.getDescription() + "\n");
-                sb.append(appt.getBeginTimeString() + "\n");
-                sb.append(appt.getEndTimeString() + "\n");
-                sb.append(appt.getDurationInMinutes());
-                bw.write(sb.toString(), 0, sb.toString().length());
-            }
+            bw.write(dumpString(apptBook));
             bw.flush();
         } catch (IOException e) {
-            throw new IOException("IOException while pretty-printing apptBook");
+            throw new IOException("IOException while pretty-printing apptBook to stdout: " + e.getMessage());
         }
+    }
+
+    private String dumpString(AbstractAppointmentBook apptBook) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Appointment book for " + apptBook.getOwnerName() + ":");
+        for(Appointment appt : ((AppointmentBook) apptBook).getAppointments()) {
+            sb.append("\n\t - ");
+            sb.append(appt.getDescription() + "\n\t\t");
+            sb.append(appt.getBeginTimeString() + " to ");
+            sb.append(appt.getEndTimeString() + " (");
+            sb.append(appt.getDurationInMinutes() + " minutes)");
+        }
+        return sb.toString();
     }
 
 }

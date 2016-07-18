@@ -16,8 +16,23 @@ public class ApptBookUtilities {
     public static Date parseDateTime(String dateTimeString) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         format.setLenient(false);
+        return format.parse(dateTimeString);
+        /*try {
+            format.parse(dateTime);
+        } catch (ParseException e) {
+            throw new ParseException(e.getMessage(), e.getErrorOffset());
+        }
+        return true;
+        */
+    }
 
-        return new Date();
+    /**
+     *
+     */
+    public static String dumpDateTime(Date date)  {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        format.setLenient(false);
+        return format.format(date);
         /*try {
             format.parse(dateTime);
         } catch (ParseException e) {
