@@ -6,7 +6,6 @@ import edu.pdx.cs410J.ParserException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,8 +35,10 @@ public class Project3 {
         String description = null;
         String beginDateString = null;
         String beginTimeString = null;
+        String beginAMPMString = null;
         String endDateString = null;
         String endTimeString = null;
+        String endAMPMString = null;
 
         int i = 0;
         for(; i < args.length && args[i].startsWith("-"); i++) {
@@ -78,18 +79,23 @@ public class Project3 {
                 beginDateString = args[i];
             } else if(beginTimeString == null) {
                 beginTimeString = args[i];
+            } else if(beginAMPMString == null) {
+                beginAMPMString = args[i];
             } else if(endDateString == null) {
                 endDateString = args[i];
             } else if(endTimeString == null) {
                 endTimeString = args[i];
+            } else if(endAMPMString == null) {
+                endAMPMString = args[i];
             }
         }
 
         //Check for wrong number of options:
-        List<String> necessaryOptionsList = Arrays.asList(owner, description, beginDateString, beginTimeString, endDateString, endTimeString);
+        List<String> necessaryOptionsList = Arrays.asList(owner, description, beginDateString, beginTimeString,
+                beginAMPMString, endDateString, endTimeString, endAMPMString);
         for(String option : necessaryOptionsList) {
             if (option == null) {
-                System.err.println("Wrong number of options; expected: owner description beginDate beginTime endDate endTime");
+                System.err.println("Wrong number of options; expected: owner description beginTime endTime");
                 System.exit(1);
             }
         }
@@ -104,10 +110,12 @@ public class Project3 {
         Date beginDateTime = null;
         Date endDateTime = null;
         try {
-            beginDateTime = ApptBookUtilities.parseDateTime(beginDateString + " " + beginTimeString);
-            endDateTime = ApptBookUtilities.parseDateTime(endDateString + " " + endTimeString);
+            beginDateTime = ApptBookUtilities.parseDateTime(beginDateString + " " + beginTimeString +
+                    " " + beginAMPMString);
+            endDateTime = ApptBookUtilities.parseDateTime(endDateString + " " + endTimeString +
+                    " " + endAMPMString);
         } catch (ParseException e) {
-            System.err.println("Invalid date/time format; expected: mm/dd/yyyy hh:mm");
+            System.err.println("Invalid date/time format; expected: mm/dd/yyyy hh:mm xm");
             System.exit(1);
         }
 
@@ -126,7 +134,7 @@ public class Project3 {
             if (apptBook == null) { //i.e. reader creation was successful, so the file exists
                 TextParser parser = new TextParser(reader);
                 try {
-                    apptBook = (AppointmentBook) parser.parse(); //TODO: is this okay?
+                    apptBook = (AppointmentBook) parser.parse();
                 } catch (ParserException e) {
                     System.err.println("Parser exception - " + e.getMessage());
                     System.exit(1);
@@ -143,8 +151,6 @@ public class Project3 {
             System.exit(1);
         }
 
-        //TODO: Check that the appointment does not already exist in the apptBook
-
         //Add the specified appointment to apptBook
         Appointment appt = new Appointment(description, beginDateTime, endDateTime);
         apptBook.addAppointment(appt);
@@ -159,8 +165,6 @@ public class Project3 {
                 System.exit(1);
             }
         }
-
-        //TODO: Handle pretty-printing to stdout (file = "-")
 
         //If we are in pretty-print mode, pretty-print apptBook to the given filepath
         if(prettyPrint) {

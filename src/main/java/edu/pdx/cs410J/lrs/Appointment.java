@@ -4,7 +4,6 @@ import edu.pdx.cs410J.AbstractAppointment;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**

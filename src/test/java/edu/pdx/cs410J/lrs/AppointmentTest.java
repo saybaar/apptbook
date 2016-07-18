@@ -16,9 +16,9 @@ public class AppointmentTest {
   Appointment getDefaultAppt() {
     Date start = null, end = null;
     try {
-      start = ApptBookUtilities.parseDateTime("01/02/3456 12:34");
-      end = ApptBookUtilities.parseDateTime("9/8/7654 3:21");
-    } catch (ParseException e) {    }
+      start = ApptBookUtilities.parseDateTime("01/02/3456 12:34 PM");
+      end = ApptBookUtilities.parseDateTime("9/8/7654 3:21 PM");
+    } catch (ParseException e) { System.err.println("ParseException in test");    }
     return new Appointment("conquering", start, end);
   }
 

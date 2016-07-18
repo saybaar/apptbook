@@ -7,7 +7,6 @@ import java.io.*;
 
 /**
  * Class for dumping appointment book files
- //TODO: Remember we need the duration of the appointment!
  */
 public class PrettyPrinter implements AppointmentBookDumper {
 
@@ -63,8 +62,8 @@ public class PrettyPrinter implements AppointmentBookDumper {
         for(Appointment appt : ((AppointmentBook) apptBook).getAppointments()) {
             sb.append("\n\t - ");
             sb.append(appt.getDescription() + "\n\t\t");
-            sb.append(appt.getBeginTimeString() + " to ");
-            sb.append(appt.getEndTimeString() + " (");
+            sb.append(ApptBookUtilities.prettyDateTime(appt.getStartDateTime()) + " to ");
+            sb.append(ApptBookUtilities.prettyDateTime(appt.getEndDateTime()) + " (");
             sb.append(appt.getDurationInMinutes() + " minutes)");
         }
         return sb.toString();

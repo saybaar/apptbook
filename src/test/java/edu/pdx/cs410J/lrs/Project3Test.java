@@ -3,6 +3,8 @@ package edu.pdx.cs410J.lrs;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.text.ParseException;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -92,4 +94,14 @@ public class Project3Test {
         assertThat(ApptBookUtilities.parseDateTime("11/11/1111 22:22:22"), equalTo(false));
     }
 */
+
+    @Test
+    public void AMPMDatesParsedCorrectly() {
+        try {
+            assertThat(ApptBookUtilities.parseDateTime("11/11/1111 02:22 PM").toString(), containsString("Sat Nov 11 14:22"));
+        } catch (ParseException e) {
+            System.err.println("Parse exception in test");
+            assert(false);
+        }
+    }
 }
